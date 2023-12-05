@@ -1,0 +1,102 @@
+---
+title: "Rome_Taxi_data"
+author: "Lam"
+date: "2023-12-05"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overall 
+
+The analysis of results from urban mobility simulations can provide very valuable information for
+the identification and addressing of problems in an urban road network. Public transport vehicles such as busses
+and taxis are often equipped with GPS location devices and the location data is submitted to a central server
+for analysis.The metropolitan city of Rome, Italy collected location data from 320 taxi drivers that work in the center of Rome. Data was collected during the period from 01/Feb/2014 until 02/March/2014. An extract of the
+dataset is found in taxi.csv. The dataset contains 4 attributes:
+      1. ID of a taxi driver. This is a unique numeric ID.
+      2. Date and time in the format Y:m:d H:m:s.msec+tz, where msec is micro-seconds, and tz is a
+      time-zone adjustment. (You may have to change the format of the date into one that R can
+      understand).
+      3. Latitude
+      4. Longitude
+      
+For a further description of this dataset: https://ieee-dataport.org/open-access/crawdad-romataxi
+
+
+```{r Rome Taxi}
+taxi <- read.csv("taxi.csv")
+summary(taxi)
+```
+
+## Purpose of the project 
+Perform a general analysis of this dataset. Learn to work with large datasets. Obtain general information of the
+behaviour of some taxi drivers. Analyse and interpret results.
+
+## Specific requirement 
+(a) Plot the location points (2D plot using all of the latitude,longitude value pairs in the dataset). Clearly
+indicate points that are invalid, outliers or noise points. 
+
+(b) Compute the minimum, maximum, and mean location values.
+
+(c) Obtain the most active, least active, and average activity of the taxi drivers (most time driven, least
+time driven, and mean time driven) . Explain the rationale of my approach and results.
+
+## Pre-processing 
+Load all the packages needed 
+```{r Load Packages}
+  library (ggplot2)
+  library (tidyverse)
+  library (maps)
+  library (lubridate)
+```
+Plot the location points of all taxi drivers 
+```{r Plot all taxi Driver} 
+subset_world_map <- subset(map_data("world"), lat >35 & lat <55 & long >-1 & long <20)
+ggplot(taxi, aes(x = Longitude, y = Latitude)) +
+  ggtitle("Location of Taix Drivers in Rome from 1st Feb 2014 to 2nd Mar 2014") +
+  geom_polygon(data = subset_world_map, aes(x = long, y = lat, group = group), fill = "lightgrey", color = "black")+
+  geom_point(size = 1, color = "blue")+
+  xlab("Longitude")+
+  ylab("Latitude")
+```
+
+We can see that there 2 regions of outliners, that were outside Rome. So I decided to move these outliners
+``` {r remove outliners}
+
+  taxi_clean <- subset(taxi, taxi$Latitude <45 & taxi$Longitude <15)
+  taxi_clean$Date.and.Time <- ymd_hms(taxi_clean$Date.and.Time)
+summary (taxi_clean)
+```
+There is another problem, the Date&Time is in Char type, so I need to convert it to time format, using 'ymd_hms()' from package 'lubridate'
+
+## Analysis 
+First we need to group 'taxi_clean' by 'DriveNo'
+```{r group by DriveNo}
+taxi_grouped <- taxi_clean %>% group_by(DriveNo)
+summary(taxi_grouped)
+
+```
+
+Now I calculate the total running time 
+``` {r Total_time}
+taxi_total_time <- taxi_grouped %>% 
+                    arrange(DriveNo, Date.and.Time) %>% 
+                    mutate(time_Diff = difftime(lead(Date.and.Time), Date.and.Time)) %>%
+                    summarise(total_Time = sum(time_Diff, na.rm = TRUE))
+
+taxi_total_time$total_Time <- as.numeric(taxi_total_time$total_Time)
+
+avg_time_driven <- mean(taxi_total_time$total_Time)/3600/24
+most_time_driven <- max(taxi_total_time$total_Time)/3600/24
+least_time_driven <- min(taxi_total_time$total_Time)/3600/24
+print(avg_time_driven)
+print(most_time_driven)
+print(least_time_driven)
+
+```
+According, the average time driven from 1st Feb to 2nd Mar is approximately 26.35 days and the least time is 0.05days or appoximately 1.12 hours and the most time driven is 29 days
