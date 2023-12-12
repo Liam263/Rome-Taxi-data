@@ -14,14 +14,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Overall 
 
 The analysis of results from urban mobility simulations can provide very valuable information for
-the identification and addressing of problems in an urban road network. Public transport vehicles such as busses
+the identification and addressing of problems in an urban road network. Public transport vehicles such as buses
 and taxis are often equipped with GPS location devices and the location data is submitted to a central server
-for analysis.The metropolitan city of Rome, Italy collected location data from 320 taxi drivers that work in the center of Rome. Data was collected during the period from 01/Feb/2014 until 02/March/2014. An extract of the
+for analysis. The metropolitan city of Rome, Italy collected location data from 320 taxi drivers that work in the centre of Rome. Data was collected during the period from 01/Feb/2014 until 02/March/2014. An extract of the
 dataset is found in taxi.csv. The dataset contains 4 attributes:
       1. ID of a taxi driver. This is a unique numeric ID.
-      2. Date and time in the format Y:m:d H:m:s.msec+tz, where msec is micro-seconds, and tz is a
-      time-zone adjustment. (You may have to change the format of the date into one that R can
-      understand).
+      2. Date and time in the format Y:m:d H:m:s.msec+tz, where msec is microseconds, and tz is a
+      time-zone adjustment. 
       3. Latitude
       4. Longitude
       
@@ -34,17 +33,17 @@ summary(taxi)
 ```
 
 ## Purpose of the project 
-Perform a general analysis of this dataset. Learn to work with large datasets. Obtain general information of the
+Perform a general analysis of this dataset. Learn to work with large datasets. Obtain general information about the
 behaviour of some taxi drivers. Analyse and interpret results.
 
 ## Specific requirement 
-(a) Plot the location points (2D plot using all of the latitude,longitude value pairs in the dataset). Clearly
-indicate points that are invalid, outliers or noise points. 
+(a) Plot the location points (2D plot using all of the latitude, and longitude value pairs in the dataset). 
+Indicate invalid points, outliers or noise points. 
 
 (b) Compute the minimum, maximum, and mean location values.
 
 (c) Obtain the most active, least active, and average activity of the taxi drivers (most time driven, least
-time driven, and mean time driven) . Explain the rationale of my approach and results.
+time driven, and meantime driven). Explain the rationale of my approach and results.
 
 ## Pre-processing 
 Load all the packages needed 
